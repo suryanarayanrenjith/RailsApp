@@ -1,0 +1,56 @@
+<h1>All Posts</h1>
+
+<%= link_to "New Post", new_post_path, class: "button" %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Body</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @posts.each do |post| %>
+      <tr>
+        <td><%= post.title %></td>
+        <td><%= truncate(post.body, length: 100) %></td>
+        <td>
+          <%= link_to "Show", post_path(post) %> |
+          <%= link_to "Edit", edit_post_path(post) %> |
+          <%= link_to "Delete", post_path(post), method: :delete, data: { confirm: "Are you sure?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+  th {
+    background-color: #f4f4f4;
+  }
+  .button {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 10px 0;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  .button:hover {
+    background-color: #0056b3;
+  }
+</style>
