@@ -1,9 +1,11 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
+# This Dockerfile is designed for production, not development. Build'n'run by hand:
 # docker build -t rails_app .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name rails_app rails_app
+# docker run -d -p 80:80 -e SECRET_KEY_BASE=<output of bin/rails secret> -v rails_app_storage:/rails/storage --name rails_app rails_app
+#
+# The SQLite databases live in /rails/storage, so keep that volume to keep your data.
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -68,6 +70,9 @@ USER 1000:1000
 # Copy built artifacts: gems, application
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
+
+# Run background jobs (like password reset emails) inside Puma, so a single container is enough.
+ENV SOLID_QUEUE_IN_PUMA="true"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

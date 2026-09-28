@@ -24,11 +24,15 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # Set RAILS_FORCE_SSL=false to serve plain HTTP, e.g. to try the Docker image on localhost.
+  # Otherwise form submissions over http:// fail the CSRF origin check.
+  ssl = ENV["RAILS_FORCE_SSL"] != "false"
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  config.assume_ssl = ssl
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = ssl
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -57,17 +61,22 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # Set host to be used by links generated in mailer templates, like password reset links.
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "example.com"), protocol: ssl ? "https" : "http" }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  # Specify outgoing SMTP server through the environment (see README), falling back
+  # to smtp/* credentials added with bin/rails credentials:edit.
+  if (smtp_address = ENV["SMTP_ADDRESS"] || Rails.application.credentials.dig(:smtp, :address))
+    smtp_user_name = ENV["SMTP_USERNAME"] || Rails.application.credentials.dig(:smtp, :user_name)
+
+    config.action_mailer.smtp_settings = {
+      address: smtp_address,
+      port: ENV.fetch("SMTP_PORT", 587).to_i,
+      user_name: smtp_user_name,
+      password: ENV["SMTP_PASSWORD"] || Rails.application.credentials.dig(:smtp, :password),
+      authentication: (:plain if smtp_user_name) # relays without accounts reject AUTH
+    }.compact
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
