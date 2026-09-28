@@ -35,5 +35,9 @@ module RailsApp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Invalid fields are flagged with aria-invalid (see ApplicationFormBuilder) rather
+    # than wrapped in a <div class="field_with_errors"> that breaks form layouts.
+    config.action_view.field_error_proc = ->(html_tag, _instance) { html_tag }
   end
 end

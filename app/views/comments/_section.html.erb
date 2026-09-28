@@ -1,0 +1,19 @@
+<%# locals: (post:, comments:, comment:) -%>
+<section id="comments" class="comments" aria-labelledby="comments_heading">
+  <h2 id="comments_heading" class="comments-heading">
+    <span id="comments_count"><%= pluralize(post.comments_count, "comment") %></span>
+  </h2>
+
+  <div id="comment_list" class="comment-list">
+    <%= render comments %>
+  </div>
+  <p class="comments-empty">No comments yet. Start the conversation!</p>
+
+  <% if authenticated? %>
+    <%= render "comments/form", post: post, comment: comment %>
+  <% else %>
+    <p class="comments-signin">
+      <%= link_to "Sign in", new_session_path %> or <%= link_to "create an account", new_registration_path %> to join the discussion.
+    </p>
+  <% end %>
+</section>

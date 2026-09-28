@@ -1,0 +1,15 @@
+<%# locals: (post:, comment:) -%>
+<%= form_with model: [ post, comment ], id: "new_comment", class: "form comment-form" do |form| %>
+  <div class="field" data-controller="character-counter">
+    <%= form.label :body, "Add a comment" %>
+    <%= form.text_area :body, rows: 3, required: true, maxlength: 1_000, placeholder: "Share your thoughts…",
+          data: { character_counter_target: "input", action: "character-counter#update" } %>
+    <div class="field-footer">
+      <%= form.error_message :body %>
+      <span class="counter" data-character-counter-target="counter"></span>
+    </div>
+  </div>
+  <div class="form-actions">
+    <%= form.submit "Post comment", class: "button button-primary" %>
+  </div>
+<% end %>

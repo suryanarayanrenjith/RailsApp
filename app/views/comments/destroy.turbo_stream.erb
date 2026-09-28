@@ -1,0 +1,2 @@
+<%= turbo_stream.remove @comment %>
+<%= turbo_stream.update_all "#comments_count, ##{dom_id(@post)} .meta-comments", pluralize(@post.comments.count, "comment") %>

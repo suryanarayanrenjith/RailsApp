@@ -1,0 +1,9 @@
+Hi <%= @user.name %>,
+
+Someone asked to reset the password for your RailsApp account. To choose a new password, visit:
+
+<%= edit_password_url(@user.password_reset_token) %>
+
+This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+
+If you didn't ask for this, you can safely ignore this email; your password won't change.

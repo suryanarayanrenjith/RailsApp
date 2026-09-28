@@ -1,13 +1,19 @@
 class PostsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   before_action :set_post, only: %i[ show edit update destroy ]
+  before_action :require_author, only: %i[ edit update destroy ]
 
   # GET /posts or /posts.json
   def index
-    @posts = Post.all
+    @query = params[:query].to_s.strip
+    @pagination = Pagination.new(Post.search(@query).newest_first.includes(:user), page: params[:page])
+    @posts = @pagination.records
   end
 
   # GET /posts/1 or /posts/1.json
   def show
+    @comments = @post.comments.chronological.includes(:user)
+    @comment = Comment.new(post: @post)
   end
 
   # GET /posts/new
@@ -21,7 +27,7 @@ class PostsController < ApplicationController
 
   # POST /posts or /posts.json
   def create
-    @post = Post.new(post_params)
+    @post = Current.user.posts.build(post_params)
 
     respond_to do |format|
       if @post.save
@@ -38,7 +44,7 @@ class PostsController < ApplicationController
   def update
     respond_to do |format|
       if @post.update(post_params)
-        format.html { redirect_to @post, notice: "Post was successfully updated." }
+        format.html { redirect_to @post, notice: "Post was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @post }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -49,22 +55,29 @@ class PostsController < ApplicationController
 
   # DELETE /posts/1 or /posts/1.json
   def destroy
-    @post.destroy
+    @post.destroy!
 
     respond_to do |format|
-      format.html { redirect_to posts_path, status: :see_other, notice: "Post was successfully destroyed." }
+      format.html { redirect_to posts_path, notice: "Post was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_post
-      @post = Post.find(params[:id])
+      @post = Post.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
+    def require_author
+      return if @post.authored_by?(Current.user)
+
+      respond_to do |format|
+        format.html { redirect_to @post, alert: "You can only change posts that you wrote." }
+        format.json { head :forbidden }
+      end
+    end
+
     def post_params
-      params.require(:post).permit(:title, :body)
+      params.expect(post: [ :title, :body ])
     end
 end

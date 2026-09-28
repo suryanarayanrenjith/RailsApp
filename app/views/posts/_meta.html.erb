@@ -1,0 +1,12 @@
+<div class="meta">
+  <%= link_to user_path(post.user), class: "meta-author" do %>
+    <%= avatar_for post.user %>
+    <span><%= post.user.name %></span>
+  <% end %>
+  <span class="meta-separator" aria-hidden="true">·</span>
+  <%= time_ago_tag post.created_at %>
+  <span class="meta-separator" aria-hidden="true">·</span>
+  <span><%= post.reading_time %> min read</span>
+  <span class="meta-separator" aria-hidden="true">·</span>
+  <%= link_to pluralize(post.comments_count, "comment"), post_path(post, anchor: "comments"), class: "meta-comments" %>
+</div>

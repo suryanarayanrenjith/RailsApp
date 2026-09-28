@@ -1,9 +1,18 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+welcome:
+  user: alice
+  title: Welcome to the blog
+  body: |
+    This is the very first post.
 
-one:
-  title: MyString
-  body: MyText
+    It has two paragraphs.
+  comments_count: 1
+  created_at: <%= 2.days.ago.to_fs(:db) %>
+  updated_at: <%= 2.days.ago.to_fs(:db) %>
 
-two:
-  title: MyString
-  body: MyText
+testing_tips:
+  user: bob
+  title: Testing tips
+  body: Write the test that would have caught the last bug you fixed.
+  comments_count: 0
+  created_at: <%= 1.day.ago.to_fs(:db) %>
+  updated_at: <%= 1.day.ago.to_fs(:db) %>
