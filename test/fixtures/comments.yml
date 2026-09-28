@@ -1,0 +1,4 @@
+bobs_reply:
+  post: welcome
+  user: bob
+  body: Great first post!

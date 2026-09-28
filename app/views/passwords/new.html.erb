@@ -1,0 +1,19 @@
+<% content_for :title, "Forgot your password?" %>
+
+<div class="auth">
+  <div class="card auth-card">
+    <h1>Forgot your password?</h1>
+    <p class="muted">Enter your email address and we’ll send you a link to choose a new one.</p>
+
+    <%= form_with url: passwords_path, class: "form" do |form| %>
+      <div class="field">
+        <%= form.label :email_address %>
+        <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", value: params[:email_address] %>
+      </div>
+
+      <%= form.submit "Email reset instructions", class: "button button-primary button-block" %>
+    <% end %>
+
+    <p class="auth-footer">Remembered it? <%= link_to "Back to sign in", new_session_path %></p>
+  </div>
+</div>

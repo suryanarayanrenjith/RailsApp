@@ -1,0 +1,9 @@
+<div class="flash-stack" aria-live="polite">
+  <% flash.each do |type, message| %>
+    <% next unless type.in?(%w[ notice alert ]) && message.present? %>
+    <div class="flash flash-<%= type %>" role="<%= type == "alert" ? "alert" : "status" %>" data-controller="flash">
+      <p><%= message %></p>
+      <button type="button" class="flash-dismiss" data-action="flash#dismiss" aria-label="Dismiss message">&times;</button>
+    </div>
+  <% end %>
+</div>

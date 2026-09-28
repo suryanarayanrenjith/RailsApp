@@ -1,40 +1,27 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, @post.title %>
+<% content_for :description, excerpt(@post, length: 160) %>
 
-<%= render @post %>
+<article id="<%= dom_id @post %>" class="post">
+  <header class="post-header">
+    <p class="back-link"><%= link_to "← All posts", posts_path %></p>
+    <h1 class="post-title"><%= @post.title %></h1>
+    <%= render "posts/meta", post: @post %>
+    <% if @post.updated_at > @post.created_at + 1.minute %>
+      <p class="post-edited">Updated <%= time_ago_tag @post.updated_at %></p>
+    <% end %>
+  </header>
 
-<div>
-  <%= link_to "Edit this post", edit_post_path(@post), class: "button" %> |
-  <%= link_to "Back to posts", posts_path, class: "button" %>
+  <div class="post-body">
+    <%= format_plain_text @post.body %>
+  </div>
 
-  <%= button_to "Destroy this post", @post, method: :delete, class: "button" %>
-</div>
+  <% if @post.authored_by?(Current.user) %>
+    <footer class="post-actions">
+      <%= link_to "Edit post", edit_post_path(@post), class: "button button-secondary" %>
+      <%= button_to "Delete post", @post, method: :delete, class: "button button-danger",
+            form: { data: { turbo_confirm: "Delete “#{@post.title}”? This can’t be undone." } } %>
+    </footer>
+  <% end %>
+</article>
 
-<style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-  table, th, td {
-    border: 1px solid #ddd;
-  }
-  th, td {
-    padding: 10px;
-    text-align: left;
-  }
-  th {
-    background-color: #f4f4f4;
-  }
-  .button {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 10px 0;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-  }
-  .button:hover {
-    background-color: #0056b3;
-  }
-</style>
+<%= render "comments/section", post: @post, comments: @comments, comment: @comment %>

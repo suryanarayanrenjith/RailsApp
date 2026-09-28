@@ -1,0 +1,11 @@
+<%# locals: (query: nil) -%>
+<div class="empty-state">
+  <% if query.present? %>
+    <h2>No posts match “<%= query %>”</h2>
+    <p>Try different keywords, or <%= link_to "browse all posts", posts_path %>.</p>
+  <% else %>
+    <h2>No posts yet</h2>
+    <p>Every blog starts with a first post. Why not write it?</p>
+    <%= link_to "Write the first post", new_post_path, class: "button button-primary" %>
+  <% end %>
+</div>

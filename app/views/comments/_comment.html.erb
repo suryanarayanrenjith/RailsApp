@@ -1,0 +1,21 @@
+<%# locals: (comment:, fresh: false) -%>
+<article id="<%= dom_id comment %>" class="<%= class_names("comment", "comment-fresh": fresh) %>">
+  <%= avatar_for comment.user %>
+  <div class="comment-content">
+    <header class="comment-header">
+      <%= link_to comment.user.name, user_path(comment.user), class: "comment-author" %>
+      <% if comment.post.authored_by?(comment.user) %>
+        <span class="badge">Author</span>
+      <% end %>
+      <%= time_ago_tag comment.created_at %>
+    </header>
+    <div class="comment-body">
+      <%= format_plain_text comment.body %>
+    </div>
+  </div>
+  <% if comment.deletable_by?(Current.user) %>
+    <%= button_to "Delete", post_comment_path(comment.post, comment), method: :delete,
+          class: "button button-ghost button-small", aria: { label: "Delete comment by #{comment.user.name}" },
+          form: { data: { turbo_confirm: "Delete this comment?" } } %>
+  <% end %>
+</article>

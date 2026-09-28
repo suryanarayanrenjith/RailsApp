@@ -1,0 +1,29 @@
+<% content_for :title, @user.name %>
+
+<section class="card profile">
+  <%= avatar_for @user, size: :large %>
+  <div class="profile-details">
+    <h1><%= @user.name %></h1>
+    <p class="muted">
+      Joined <%= l @user.created_at.to_date, format: :long %> ·
+      <%= pluralize(@pagination.total_count, "post") %>
+    </p>
+  </div>
+  <% if @user == Current.user %>
+    <%= link_to "Write a post", new_post_path, class: "button button-primary" %>
+  <% end %>
+</section>
+
+<h2 class="section-title">Posts by <%= @user.name %></h2>
+
+<div class="post-list">
+  <% if @posts.present? %>
+    <%= render @posts %>
+  <% else %>
+    <div class="empty-state">
+      <p><%= @user == Current.user ? "You haven’t" : "#{@user.name} hasn’t" %> published anything yet.</p>
+    </div>
+  <% end %>
+</div>
+
+<%= render "shared/pagination", pagination: @pagination %>

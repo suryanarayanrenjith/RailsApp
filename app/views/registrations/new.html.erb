@@ -1,0 +1,40 @@
+<% content_for :title, "Create an account" %>
+
+<div class="auth">
+  <div class="card auth-card">
+    <h1>Create an account</h1>
+    <p class="muted">Join to publish posts and comment on others.</p>
+
+    <%= form_with model: @user, url: registration_path, class: "form" do |form| %>
+      <div class="field">
+        <%= form.label :name, "Display name" %>
+        <%= form.text_field :name, required: true, autofocus: true, autocomplete: "name", maxlength: 50 %>
+        <%= form.error_message :name %>
+      </div>
+
+      <div class="field">
+        <%= form.label :email_address %>
+        <%= form.email_field :email_address, required: true, autocomplete: "email" %>
+        <%= form.error_message :email_address %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password %>
+        <%= form.password_field :password, required: true, autocomplete: "new-password",
+              minlength: User::MINIMUM_PASSWORD_LENGTH, maxlength: 72, aria: { describedby: "user_password_hint" } %>
+        <p id="user_password_hint" class="hint">At least <%= User::MINIMUM_PASSWORD_LENGTH %> characters.</p>
+        <%= form.error_message :password %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password_confirmation, "Confirm password" %>
+        <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", maxlength: 72 %>
+        <%= form.error_message :password_confirmation %>
+      </div>
+
+      <%= form.submit "Create account", class: "button button-primary button-block" %>
+    <% end %>
+
+    <p class="auth-footer">Already have an account? <%= link_to "Sign in", new_session_path %></p>
+  </div>
+</div>

@@ -1,16 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>RailsApp</title>
+    <title><%= safe_join([ content_for(:title), "RailsApp" ].compact_blank, " · ") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for(:description).presence || "A friendly place to write posts and discuss them." %>">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="RailsApp">
+    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= yield :head %>
+
+    <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <nav class="container nav" aria-label="Main">
+        <%= link_to root_path, class: "brand" do %>
+          <span class="brand-mark" aria-hidden="true">R</span>
+          <span>RailsApp</span>
+        <% end %>
+
+        <div class="nav-actions">
+          <% if authenticated? %>
+            <%= link_to new_post_path, class: "button button-primary" do %>
+              <span aria-hidden="true">+</span>
+              <span>Write<span class="hide-on-mobile"> a post</span></span>
+            <% end %>
+            <%= link_to user_path(Current.user), class: "nav-profile", title: "Your posts" do %>
+              <%= avatar_for Current.user %>
+              <span class="hide-on-mobile"><%= Current.user.name %></span>
+            <% end %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "button button-ghost" %>
+          <% else %>
+            <%= link_to "Sign in", new_session_path, class: "button button-ghost" %>
+            <%= link_to "Sign up", new_registration_path, class: "button button-primary" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="container">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        Built with Ruby on Rails <%= Rails.version.split(".").first(2).join(".") %> · <%= link_to "All posts", posts_path %>
+      </div>
+    </footer>
   </body>
 </html>

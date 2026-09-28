@@ -1,0 +1,3 @@
+<%= turbo_stream.append "comment_list", partial: "comments/comment", locals: { comment: @comment, fresh: true } %>
+<%= turbo_stream.update_all "#comments_count, ##{dom_id(@post)} .meta-comments", pluralize(@post.comments.count, "comment") %>
+<%= turbo_stream.replace "new_comment", partial: "comments/form", locals: { post: @post, comment: Comment.new(post: @post) } %>
