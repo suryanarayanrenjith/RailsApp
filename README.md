@@ -122,11 +122,4 @@ plain HTTP, add `-e RAILS_FORCE_SSL=false` and open <http://localhost>.
 ## Upgrading from the original version
 
 This project started as a Rails 7.0 scaffold that only ran on the machine it was created on. It was
-rebuilt on Rails 8.1 because Rails 7.0 and Ruby 3.1 no longer receive security fixes. Things to know
-if you have an older checkout:
-
-- The database moved from `db/development.sqlite3` to `storage/development.sqlite3`. Run `bin/setup`
-  to create it.
-- `config/master.key` had been committed to the repository, which exposed the old credentials, so
-  they were removed. Use `SECRET_KEY_BASE`, or create new credentials with `bin/rails credentials:edit`.
-  Never commit `config/master.key`; it is now listed in `.gitignore`.
+rebuilt on Rails 8.1 because Rails 7.0 and Ruby 3.1 no longer receive security fixes.
